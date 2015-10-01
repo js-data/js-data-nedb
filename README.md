@@ -17,7 +17,7 @@ __Latest Release:__ [![Latest Release](https://img.shields.io/github/release/js-
 Load `js-data-nedb.js` after `js-data.js`.
 
 ```js
-var adapter = new DSLocalStorageAdapter();
+var adapter = new DSNedbAdapter();
 
 var store = new JSData.DS();
 store.registerAdapter('nedb', adapter, { default: true });
