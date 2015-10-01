@@ -45,8 +45,6 @@ module.exports = function (grunt) {
           library: 'js-data-nedb'
         },
         externals: [
-          'mout/string/underscore',
-          'mout/random/guid',
           'mout/array/map',
           'mout/array/unique',
           'js-data',

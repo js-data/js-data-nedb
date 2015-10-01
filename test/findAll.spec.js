@@ -194,4 +194,81 @@ describe('DSNedbAdapter#findAll', function() {
         assert.isDefined(posts[1].user);
       });
   });
+  it('should sort, skip, and limit', function () {
+    return adapter.create(User, {
+      age: 10,
+        height: 65
+    }).then(function () {
+      return adapter.create(User, {
+        age: 20,
+        height: 64
+      })
+    }).then(function () {
+      return adapter.create(User, {
+        age: 30,
+        height: 65
+      })
+    }).then(function () {
+      return adapter.create(User, {
+        age: 30,
+        height: 61
+      })
+    }).then(function () {
+      return adapter.create(User, {
+        age: 30,
+        height: 69
+      })
+    }).then(function () {
+      return adapter.create(User, {
+        age: 40,
+        height: 99
+      })
+    }).then(function () {
+      return adapter.create(User, {
+        age: 50,
+        height: 88
+      })
+    }).then(function () {
+      return adapter.findAll(User, {
+        orderBy: [
+          ['age', 'asc'],
+          ['height', 'desc']
+        ],
+        skip: 1,
+        limit: 4
+      })
+    }).then(function (users) {
+      assert.equalObjects(users.map(function (user) {
+        return user.age;
+      }), [20, 30, 30, 30])
+      assert.equalObjects(users.map(function (user) {
+        return user.height;
+      }), [64, 69, 65, 61])
+      
+      return adapter.findAll(User, {
+        age: 30,
+        orderBy: 'height'
+      })
+    }).then(function (users) {
+      assert.equalObjects(users.map(function (user) {
+        return user.age;
+      }), [30, 30, 30])
+      assert.equalObjects(users.map(function (user) {
+        return user.height;
+      }), [61, 65, 69])
+      
+      return adapter.findAll(User, {
+        orderBy: [['age', 'desc']],
+        limit: 1,
+        offset: 1
+      })
+    }).then(function (users) {
+      assert.equalObjects(users.map(function (user) {
+        return user.age;
+      }), [40])
+      assert.equalObjects(users.map(function (user) {
+        return user.height;
+      }), [99])
+    });
+  })
 });

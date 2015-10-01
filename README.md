@@ -23,6 +23,22 @@ var store = new JSData.DS();
 store.registerAdapter('nedb', adapter, { default: true });
 
 // "store" will now use the nedb adapter for all async operations
+var User = store.defineResource({
+  name: 'user',
+  // path where you want the table file for this resource created
+  filepath: 'path/to/userTable.db'
+});
+
+// nedb handler is available here
+User.db; // don't run custom queries unless you know what you're doing
+
+// one method you might want to call is User.db.persistence.compactDatafile()
+
+// we don't specify a filepath here,
+// so it's automatically created at "./post.db"
+var Post = store.defineResource({
+  name: 'post'
+});
 ```
 
 ### Changelog

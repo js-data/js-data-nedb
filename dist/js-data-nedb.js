@@ -63,17 +63,9 @@ module.exports =
 
 	var reserved = ['orderBy', 'sort', 'limit', 'offset', 'skip', 'where'];
 
-	var Defaults = function Defaults() {
-	  _classCallCheck(this, Defaults);
-	};
-
 	var DSNedbAdapter = (function () {
-	  function DSNedbAdapter(options) {
+	  function DSNedbAdapter() {
 	    _classCallCheck(this, DSNedbAdapter);
-
-	    options = options || {};
-	    this.defaults = new Defaults();
-	    DSUtils.deepMixIn(this.defaults, options);
 	  }
 
 	  _createClass(DSNedbAdapter, [{
@@ -192,34 +184,40 @@ module.exports =
 	    }
 	  }, {
 	    key: 'getQueryOptions',
-	    value: function getQueryOptions(resourceConfig, params) {
+	    value: function getQueryOptions(resourceConfig, params, query) {
 	      params = params || {};
 	      params.orderBy = params.orderBy || params.sort;
 	      params.skip = params.skip || params.offset;
 
-	      var queryOptions = {};
-
 	      if (params.orderBy) {
-	        if (DSUtils.isString(params.orderBy)) {
-	          params.orderBy = [[params.orderBy, 'asc']];
-	        }
-	        for (var i = 0; i < params.orderBy.length; i++) {
-	          if (DSUtils.isString(params.orderBy[i])) {
-	            params.orderBy[i] = [params.orderBy[i], 'asc'];
+	        var i;
+
+	        (function () {
+	          if (DSUtils.isString(params.orderBy)) {
+	            params.orderBy = [[params.orderBy, 'asc']];
 	          }
-	        }
-	        queryOptions.sort = params.orderBy;
+	          for (i = 0; i < params.orderBy.length; i++) {
+	            if (DSUtils.isString(params.orderBy[i])) {
+	              params.orderBy[i] = [params.orderBy[i], 'asc'];
+	            }
+	          }
+	          var orderByOptions = {};
+	          DSUtils.forEach(params.orderBy, function (order) {
+	            orderByOptions[order[0]] = order[1].toUpperCase() === 'ASC' ? 1 : -1;
+	          });
+	          query = query.sort(orderByOptions);
+	        })();
 	      }
 
 	      if (params.skip) {
-	        queryOptions.skip = params.skip;
+	        query = query.skip(params.skip);
 	      }
 
 	      if (params.limit) {
-	        queryOptions.limit = params.limit;
+	        query = query.limit(params.limit);
 	      }
 
-	      return queryOptions;
+	      return query;
 	    }
 	  }, {
 	    key: 'getDb',
@@ -254,12 +252,14 @@ module.exports =
 	    }
 	  }, {
 	    key: 'FIND',
-	    value: function FIND(resourceConfig, query) {
+	    value: function FIND(resourceConfig, params) {
 	      var _this2 = this;
 
-	      query = query || {};
+	      params = params || {};
 	      return new DSUtils.Promise(function (resolve, reject) {
-	        _this2.getDb(resourceConfig).find(query, function (err, doc) {
+	        var query = _this2.getDb(resourceConfig).find(_this2.getQuery(resourceConfig, params));
+	        query = _this2.getQueryOptions(resourceConfig, params, query);
+	        query.exec(function (err, doc) {
 	          if (err) {
 	            reject(err);
 	          } else {
@@ -419,9 +419,7 @@ module.exports =
 	      var items = null;
 	      options = this.origify(options ? DSUtils.copy(options) : {});
 	      options['with'] = options['with'] || [];
-	      DSUtils.deepMixIn(options, this.getQueryOptions(resourceConfig, params));
-	      var query = this.getQuery(resourceConfig, params);
-	      return this.FIND(resourceConfig, query).then(function (_items) {
+	      return this.FIND(resourceConfig, params).then(function (_items) {
 	        items = _items;
 	        var tasks = [];
 	        DSUtils.forEach(resourceConfig.relationList, function (def) {

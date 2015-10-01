@@ -1,3 +1,3 @@
-##### 0.1.0 - 28 September 2015
+##### 1.0.0 - 30 September 2015
 
 - Initial release

@@ -13,15 +13,8 @@ let reserved = [
   'where'
 ]
 
-class Defaults {
-
-}
-
 class DSNedbAdapter {
-  constructor (options) {
-    options = options || {}
-    this.defaults = new Defaults()
-    DSUtils.deepMixIn(this.defaults, options)
+  constructor () {
   }
 
   getQuery (resourceConfig, params) {
@@ -137,12 +130,10 @@ class DSNedbAdapter {
     return query
   }
 
-  getQueryOptions (resourceConfig, params) {
+  getQueryOptions (resourceConfig, params, query) {
     params = params || {}
     params.orderBy = params.orderBy || params.sort
     params.skip = params.skip || params.offset
-
-    let queryOptions = {}
 
     if (params.orderBy) {
       if (DSUtils.isString(params.orderBy)) {
@@ -155,18 +146,22 @@ class DSNedbAdapter {
           params.orderBy[i] = [params.orderBy[i], 'asc']
         }
       }
-      queryOptions.sort = params.orderBy
+      let orderByOptions = {}
+      DSUtils.forEach(params.orderBy, function (order) {
+        orderByOptions[order[0]] = order[1].toUpperCase() === 'ASC' ? 1 : -1
+      })
+      query = query.sort(orderByOptions)
     }
 
     if (params.skip) {
-      queryOptions.skip = params.skip
+      query = query.skip(params.skip)
     }
 
     if (params.limit) {
-      queryOptions.limit = params.limit
+      query = query.limit(params.limit)
     }
 
-    return queryOptions
+    return query
   }
 
   getDb (resourceConfig) {
@@ -196,10 +191,12 @@ class DSNedbAdapter {
     })
   }
 
-  FIND (resourceConfig, query) {
-    query = query || {}
+  FIND (resourceConfig, params) {
+    params = params || {}
     return new DSUtils.Promise((resolve, reject) => {
-      this.getDb(resourceConfig).find(query, function (err, doc) {
+      let query = this.getDb(resourceConfig).find(this.getQuery(resourceConfig, params))
+      query = this.getQueryOptions(resourceConfig, params, query)
+      query.exec(function (err, doc) {
         if (err) {
           reject(err)
         } else {
@@ -343,9 +340,7 @@ class DSNedbAdapter {
     let items = null
     options = this.origify(options ? DSUtils.copy(options) : {})
     options.with = options.with || []
-    DSUtils.deepMixIn(options, this.getQueryOptions(resourceConfig, params))
-    let query = this.getQuery(resourceConfig, params)
-    return this.FIND(resourceConfig, query).then(_items => {
+    return this.FIND(resourceConfig, params).then(_items => {
       items = _items
       let tasks = []
       DSUtils.forEach(resourceConfig.relationList, def => {
