@@ -12,7 +12,7 @@ nedb adapter for [js-data](http://www.js-data.io/).
 __Latest Release:__ [![Latest Release](https://img.shields.io/github/release/js-data/js-data-nedb.svg?style=flat-square)](https://github.com/js-data/js-data-nedb/releases)
 
 ### Quick Start
-`bower install --save js-data js-data-nedb` or `npm install --save js-data js-data-nedb`.
+`npm install --save js-data js-data-nedb`.
 
 Load `js-data-nedb.js` after `js-data.js`.
 
