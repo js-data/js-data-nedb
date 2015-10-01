@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/js-data/js-data/master/js-data.png" alt="js-data logo" title="js-data" align="right" width="64" height="64" />
 
-## js-data-nedb [![bower version](https://img.shields.io/bower/v/js-data-nedb.svg?style=flat-square)](https://www.npmjs.org/package/js-data-nedb) [![npm version](https://img.shields.io/npm/v/js-data-nedb.svg?style=flat-square)](https://www.npmjs.org/package/js-data-nedb) [![Circle CI](https://img.shields.io/circleci/project/js-data/js-data-nedb/master.svg?style=flat-square)](https://circleci.com/gh/js-data/js-data-nedb/tree/master) [![npm downloads](https://img.shields.io/npm/dm/js-data-nedb.svg?style=flat-square)](https://www.npmjs.org/package/js-data-nedb) [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/js-data/js-data-nedb/blob/master/LICENSE)
+## js-data-nedb [![npm version](https://img.shields.io/npm/v/js-data-nedb.svg?style=flat-square)](https://www.npmjs.org/package/js-data-nedb) [![Circle CI](https://img.shields.io/circleci/project/js-data/js-data-nedb/master.svg?style=flat-square)](https://circleci.com/gh/js-data/js-data-nedb/tree/master) [![npm downloads](https://img.shields.io/npm/dm/js-data-nedb.svg?style=flat-square)](https://www.npmjs.org/package/js-data-nedb) [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/js-data/js-data-nedb/blob/master/LICENSE)
 
 nedb adapter for [js-data](http://www.js-data.io/).
 
