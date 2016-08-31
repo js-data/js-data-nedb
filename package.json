@@ -42,7 +42,7 @@
     "sinon": "1.17.1",
     "standard": "5.3.1",
     "time-grunt": "1.2.1",
-    "webpack-dev-server": "1.12.0"
+    "webpack-dev-server": "1.15.0"
   },
   "scripts": {
     "test": "grunt test"
